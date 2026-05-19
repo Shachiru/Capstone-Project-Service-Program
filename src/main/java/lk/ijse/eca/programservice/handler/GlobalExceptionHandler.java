@@ -62,13 +62,13 @@ public class GlobalExceptionHandler {
         log.warn("Validation failed for [{}]: {}", request.getRequestURI(), detail);
 
         ProblemDetail problem = buildProblemDetail(
-                HttpStatus.UNPROCESSABLE_ENTITY, "Validation Error", detail, request.getRequestURI());
+                HttpStatus.valueOf(422), "Validation Error", detail, request.getRequestURI());
 
         // Attach individual field errors as RFC 9457 extension members
         ex.getBindingResult().getFieldErrors()
                 .forEach(fe -> problem.setProperty(fe.getField(), fe.getDefaultMessage()));
 
-        return problemResponse(HttpStatus.UNPROCESSABLE_ENTITY, problem);
+        return problemResponse(HttpStatus.valueOf(422), problem);
     }
 
     /**
@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
         log.warn("Constraint violation for [{}]: {}", request.getRequestURI(), detail);
 
         ProblemDetail problem = buildProblemDetail(
-                HttpStatus.UNPROCESSABLE_ENTITY, "Validation Error", detail, request.getRequestURI());
+                HttpStatus.valueOf(422), "Validation Error", detail, request.getRequestURI());
 
         ex.getConstraintViolations().forEach(cv -> {
             String path = cv.getPropertyPath().toString();
@@ -98,7 +98,7 @@ public class GlobalExceptionHandler {
             problem.setProperty(field, cv.getMessage());
         });
 
-        return problemResponse(HttpStatus.UNPROCESSABLE_ENTITY, problem);
+        return problemResponse(HttpStatus.valueOf(422), problem);
     }
 
     @ExceptionHandler(Exception.class)
